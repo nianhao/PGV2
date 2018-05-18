@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>uitestl.html</title>
+
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta charset="utf-8" />
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+<link rel="stylesheet" href="jqueryUI/jquery-ui.css" />
+<link rel="stylesheet" href="css/ui.css" />
+<script src="javascript/jquery-3.3.1.js"></script>
+<script src="jqueryUI/jquery-ui.js"></script>
+<script src="javascript/uiFactory.js"></script>
+<script src="javascript/ui.js"></script>
+</head>
+
+<body>
+	<br><!--  
+		<div class="videoContent" id="videoContent">
+		    <div class="top"><span>与<b>小明</b>视频通话中</span></div>
+		    <div class="video left"> <video autoplay ></video></div>
+		    <div class="video right"><video autoplay></video></div>
+		    <div class="bottom left">
+		    	<ul class="left">
+		    		<li class="sendText"><a href="#" title="发送文字"></a></li>
+		    		<li class="mic"><a href="#" title="关闭麦克风"></a></li>
+		    		<li class="camera"><a href="#" title="关闭摄像头"></a></li>
+		    		<li class="audio"><a href="#" title="关闭音量"></a></li>
+		    		<li class="changeCam"><a href="#" title="切换摄像头"></a></li>
+		    		<li class="hang-up"><a href="#" title="挂断"></a></li>
+		    	</ul>
+		    </div>
+	    </div>
+		-->
+		<!--  
+		<div class="videoCallContent">
+			<div class="userContent">
+				<div class="deadPortrait"><img class="headImg"/></div>
+				<div class="text">
+					<div class="userName"><span>小明</span></div>
+					<div class="connType"><span>视频通话</span></div>
+				</div>
+			</div>
+			<div class="controlContent">
+				<ul>
+					<li class="textBtn rej"><a href="#" title="拒绝"></a></li>
+					<li class="textBtn textRej"><a href="#" title="回复消息"></a></li>
+					<li class="textBtn audioAcc"><a href="#" title="语音接听"></a></li>
+					<li class="accept">
+						<div class="acceptSlider"> 
+							<div class="slider" >
+							<a href="#" title="滑动接听"></a>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	-->
+</body>
+<script>
+	var width=$(window).width();
+	var height=$(window).height();
+	
+  	//开启提醒信息
+  	$( document ).tooltip(
+  		{
+  			show:{effect:"drop",delay:200},
+  			hide:{effect:"drop",delay:200}
+  		}
+  	);
+  	
+  </script>
+</html>

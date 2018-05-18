@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>videoCall.html</title>
+	<meta  charset="UTF-8">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+	<style>
+		video{
+			margin:10px;
+			width:360px;
+			heigth:270px;
+			background:gray;
+		}
+	</style>
+	<script src="javascript/jquery-3.3.1.js"></script>
+	<link rel="stylesheet" href="jqueryUI/jquery-ui.css" />
+	<link rel="stylesheet" href="css/ui.css" />
+	<script src="jqueryUI/jquery-ui.js"></script>
+	<script src="javascript/uiFactory.js"></script>
+	<script src="javascript/ui.js"></script>
+	<script src="javascript/common.js"></script>
+	<script src="javascript/webSS.js"></script>
+	<script src="javascript/Pc.js"></script>
+	<script src="javascript/local.js"></script>
+	<script src="javascript/remote.js"></script>
+	
+  </head>
+  
+  <body>
+    视频通话. <br>
+    <div buttons>
+    	<button class="reg" id="enteras1"  uid="1">注册为1</button>
+    	<button class="exit" id="exit1" value="退出">退出1</button>
+    	<button class="call" id="call2" uid="1" remoteid="2" >呼叫2</button>
+    	<button class="start" id="start1" uid="1" remoteid="2">开始发视频给2</button>
+    	<button class="reg" id="enteras2"  uid="2">注册为2</button>
+    	<button class="exit"id="exit2" value="退出">退出2</button>
+    	<button class="accept" id="accept2" uid="2" remoteid="1">接收1的通话申请</button>
+    	<button class="start" id="start1" uid="2" remoteid="1">开始发视频给1</button>
+    	
+    </div>>
+  </body>
+</html>

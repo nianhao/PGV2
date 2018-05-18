@@ -1,0 +1,210 @@
+body,div,img,input,button,video,ul,li{
+	margin:0px;
+	padding:0px;
+	border:0px;
+}
+ul,li{
+	list-style-type:none;
+}
+body{
+	width:100%;
+}
+.right{
+	float:right;
+}
+.left{
+	float:left;
+}
+.videoContent{
+	width:720px;
+	height:350px;
+	background:black;
+	margin:0 auto;
+	z-index:1000;
+}
+.videoContent .top{
+	width:100%;
+	height:30px;
+	background:black;
+	color:white;
+	line-height:30px;
+	align-content:center;
+}
+.videoContent .top b{
+	color:red;
+}
+.videoContent .video{
+	width:50%;
+	height:270px;
+	background:gray;
+}
+.videoContent .video video{
+	width:100%;
+	height:100%;
+}
+
+.videoContent .bottom{
+	width:100%;
+	height:50px;
+	background:black;
+}
+.videoContent .bottom ul{
+	
+	width:100%;
+	height:100%;
+	margin:0 auto;
+	line-height:50px;
+	text-align:center;
+}
+.videoContent .bottom li{
+	width:10%;
+	height:100%;
+	float:left;
+	display:inline;
+
+}
+.videoContent .bottom a{
+	display:block;
+	height:100%
+
+}
+.bottom .left .sendText{
+	background-image:url("../image/videoControl.png");
+	background-repeat:no-repeat;
+	background-position:0px -222px;
+}
+.bottom .left .mic{
+	background-image:url("../image/videoControl.png");
+	background-repeat:no-repeat;
+	background-position:0px 2px;
+}	
+.bottom .left .camera{
+	background-image:url("../image/videoControl.png");
+	background-repeat:no-repeat;
+	background-position:0px -52px;
+}
+.bottom .left .audio{
+	background-image:url("../image/videoControl.png");
+	background-repeat:no-repeat;
+	background-position:0px -108px;
+}
+.bottom .left .changeCam{
+	background-image:url("../image/videoControl.png");
+	background-repeat:no-repeat;
+	background-position:0px -163px;
+}
+.bottom .left .hang-up{
+	background-image:url("../image/hangup.png");
+	background-repeat:no-repeat;
+	background-position:0px -4px;
+}
+	
+.videoCallContent{
+	width:360px;
+	height:480px;
+	margin:0 auto;
+	border-radius:5% 5% 5% 5%;
+	overflow:hidden;
+	background: #c1bfbf;
+	z-index:1000;
+}
+.userContent{
+	width:100%;
+	height:68%;
+}
+.deadPortrait{
+	width:100%;
+	height:68%;
+}
+.deadPortrait .headImg{
+	width:150px;
+	height:150px;
+	border:solid 2px black;
+	border-radius:75px;
+	background:white;
+	position: relative;
+	margin:30px 100px;
+	display:inline-block;
+}
+.userContent .text{
+	width:100%;
+	height:32%;	
+	text-align:center;
+	line-height:240%;
+}
+.userContent .userName{
+	height:34%;
+}	
+.userContent .connType{
+	height:34%;
+}	
+.videoCallContent .controlContent{
+	width:100%;
+	height:32%;
+}
+.controlContent ul{
+	width:100%;
+	height:100%;
+}
+.controlContent li{
+	float:left;
+	height:30%;
+	margin:5px 3px;
+	text-align:center;
+	background-position: 30px 0px;
+	display:inline;
+	
+}
+.controlContent a{
+	display:block;
+	height:100%
+}
+.controlContent .textBtn{
+	margin-top:5%;
+}
+.controlContent .rej{
+	width:30%;
+	margin-left: 10px;
+	background-image:url("../image/rej-small.png");
+	background-repeat:no-repeat;
+}
+.controlContent .textRej{
+	width:30%;
+	background-image:url("../image/textRejSmall.png");
+	background-repeat:no-repeat;
+	
+}
+.controlContent .audioAcc{
+	width:30%;
+	background-image:url("../image/audioAccsmall.png");
+	background-repeat:no-repeat;
+	
+}
+.controlContent .accept{
+	width:100%;
+}
+.controlContent .accept .acceptSlider{
+	width:80%;
+	height:80%;
+	margin:5px auto;
+	overflow:visible;
+	border-radius: 30px;
+	background-image:url("../image/green.png");
+	background-position: -260px 0px;
+	
+}
+.controlContent .accept .acceptSlider .slider{
+	width:47px;
+	height:130%;
+	background-image:url("../image/videoAccSmall.png");
+	background-repeat:no-repeat;
+	top:-4px;
+	left:-5px;
+	
+}
+.controlContent .accept .acceptSlider .slider a{
+	display:block;
+	height:100%;
+}
+
+
