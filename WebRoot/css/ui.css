@@ -1,4 +1,4 @@
-body,div,img,input,button,video,ul,li{
+body,div,img,input,button,video,ul,li,textarea{
 	margin:0px;
 	padding:0px;
 	border:0px;
@@ -206,5 +206,134 @@ body{
 	display:block;
 	height:100%;
 }
-
-
+.textContent{
+	width:600px;
+	height:600px;
+	margin:0 auto;
+	background:#e8f1f3;
+	border-radius:15px;
+	over-flow:hidden;
+	border:1px solid gray;
+}
+.textContent .top{
+	height:40px;
+	width:100%;
+	border-bottom:0.5px solid gray;
+}
+.textContent .top .remote{
+	line-height:40px;
+	text-align:center;
+}
+.textContent .top .close{
+	float: right;
+    height: 35px;
+    width: 35px;
+    background: black;
+    position: relative;
+    top: -37px;
+    left: -19px;
+    border-radius: 22px;
+    background-image: url(../image/textIcon/closeBtn.png);
+    background-repeat: no-repeat;
+}
+.textContent .main .messageContent{
+	height:360px;
+	overflow:auto;
+	background:white;
+	margin:5px;
+}
+.textContent .main .messageContent p{
+}
+.textContent .main .messageContent p img{
+	width:95%;
+}
+.textContent .main .messageContent .timeContent{
+	color:blue;
+	font-size:12px;
+	display:block;
+}
+.bottom{
+	width:100%;
+	height:189px;
+	border-top:0.5px solid black; 
+	margin-top:10px;
+}
+.bottom .optContent{
+	height:60px;
+}
+.bottom .optContent ul{
+	
+	width:100%;
+	height:100%;
+}
+.bottom .optContent ul li{
+	float:left;
+	width:40px;
+	display:inline;
+}
+.bottom .optContent ul li a{
+	display:block;
+	height:100%;
+}
+.bottom .optContent .file{
+	background-image: url(../image/textIcon/files.png);
+    height: 40px;
+    width: 40px;
+    margin-left: 15px;
+    margin-top: 7px;
+    background-repeat: no-repeat;
+}
+.bottom .optContent .audio{
+	background-image: url(../image/textIcon/recorder.png);
+    height: 40px;
+    width: 40px;
+    margin-left: 15px;
+    margin-top: 7px;
+    background-repeat: no-repeat;
+}
+.bottom .optContent .img{
+	background-image: url(../image/textIcon/pic.png);
+    height: 40px;
+    width: 44px;
+    margin-left: 15px;
+    margin-top: 7px;
+    background-repeat: no-repeat;
+}
+.bottom .optContent .audioCall{
+	background-image: url(../image/textIcon/audioCall.png);
+    height: 40px;
+    width: 44px;
+    margin-left: 15px;
+    margin-top: 7px;
+    background-repeat: no-repeat;
+}
+.bottom .optContent .videoCall{
+	background-image: url(../image/textIcon/videoCall.png);
+    height: 40px;
+    width: 44px;
+    margin-left: 15px;
+    margin-top: 7px;
+    background-repeat: no-repeat;
+}
+.bottom .currMessage{
+	width:100%;
+	height:129px;
+}
+.bottom .currMessage textarea{
+	width:80%;
+	height:80%;
+	margin:5px 35px;
+	background:white;
+}
+.bottom .sendBtn{
+	float:right;
+	position: relative;
+    top: -36px;
+    left: -10px;
+}
+.bottom .sendBtn .btn{
+	width: 60px;
+    height: 30px;
+    border-radius: 15px;
+    border: 2px solid;
+}

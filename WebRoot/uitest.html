@@ -18,7 +18,7 @@
 </head>
 
 <body>
-	<br><!--  
+	<br>  
 		<div class="videoContent" id="videoContent">
 		    <div class="top"><span>与<b>小明</b>视频通话中</span></div>
 		    <div class="video left"> <video autoplay ></video></div>
@@ -34,7 +34,7 @@
 		    	</ul>
 		    </div>
 	    </div>
-		-->
+		
 		<!--  
 		<div class="videoCallContent">
 			<div class="userContent">
@@ -61,11 +61,47 @@
 		</div>
 	</div>
 	-->
+	<div class="textContent">
+		<div class="top">
+			<div class="remote">小军</div>
+			<div class="close"></div>
+		</div>
+		<div class="main">
+			<div class="messageContent">
+				<P><span class="timeContent">小明 2018/05/18 16:08</span>
+					你好
+				</P>
+				<p class="remoteMessage">
+					<span class="timeContent">小军 2018/05/18 16:08</span>
+					<img src="http://img1.gtimg.com/view/pics/hv1/90/157/1468/95496825.jpg"></img>
+				</p>
+			</div>
+		</div>
+		<div class="bottom">
+			<div class="optContent">
+				<ul>
+					<li class="file"><a href="#" title="文件"></a></li>
+					<li class="audio"><a href="#" title="语言消息"></a></li>
+					<li class="img"><a href="#" title="图片"></a></li>
+					<li class="audioCall"><a href="#" title="语音电话"></a></li>
+					<li class="videoCall"><a href="#" title="视频电话"></a></li>
+				</ul>
+			</div>
+			<div class="currMessage">
+				<textarea></textarea>
+			<div class="sendBtn" >
+				<input type="button" value="发送" class="btn">
+			</div>
+			</div>
+
+		</div>
+	</div>
+	
 </body>
 <script>
 	var width=$(window).width();
 	var height=$(window).height();
-	
+	$(".textContent").draggable();
   	//开启提醒信息
   	$( document ).tooltip(
   		{
