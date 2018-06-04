@@ -1,0 +1,18 @@
+@CHARSET "UTF-8";
+body,div,img,input,button,video,ul,li,textarea{
+	margin:0px;
+	padding:0px;
+	border:0px;
+}
+ul,li{
+	list-style-type:none;
+}
+body{
+	width:100%;
+}
+.right{
+	float:right;
+}
+.left{
+	float:left;
+}
