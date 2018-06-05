@@ -1,11 +1,7 @@
 @CHARSET "UTF-8";
-#background{
+#map{
 	-webkit-filter: blur(2px);   /* Chrome, Safari, Opera */
     filter: blur(2px);
-	width:100%;
-	height:100%;
-}
-#map{
 	width:100%;
 	height:100%;
 }
@@ -16,4 +12,17 @@
 }
 #message{
 	z-index:999;
+	display:inline;
+	position:absolute;
+	left:45%;
+	top:40%;
+	width:400px;
+}
+
+#user{
+	z-index:9999;
+	position:absolute;
+	left:2%;
+	top:20%;
+	width:300px;
 }

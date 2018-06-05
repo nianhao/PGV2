@@ -13,6 +13,7 @@
       </id>
       <property name="userName" column="username" type="string"/>
       <property name="userPwd" column="userpwd" type="string"/>
+      <property name="showName" column="showname" type="string"/>
       <property name="role" column="role" type="string"/>
       <property name="login" column="login" type="int"/>
    </class>

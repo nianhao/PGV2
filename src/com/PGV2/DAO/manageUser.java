@@ -146,6 +146,7 @@ public class manageUser {
 		User tmpUser = null;
 		try {
 			tx = session.beginTransaction();
+			System.out.println(userID);
 			tmpUser = (User) session.get(User.class, userID);
 			tx.commit();
 		} catch (HibernateException e) {

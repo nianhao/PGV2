@@ -15,18 +15,22 @@ import javax.websocket.server.ServerEndpoint;
 
 import com.PGV2.javaBean.Message;
 import com.PGV2.javaBean.Text;
+import com.PGV2.javaBean.User;
 import com.PGV2.javaBean.candidate;
+import com.PGV2.javaBean.onlineUser;
 import com.PGV2.javaBean.sdp;
+
 
 @ServerEndpoint("/webSocketServer/{uid}")
 public class WebSocketServer {
 	public static Map<String,Session> uid_session=Collections.synchronizedMap(new HashMap<String,Session>());
+	public static Map<String,Session> tmpUid_session=Collections.synchronizedMap(new HashMap<String,Session>());
 	
 	@OnOpen
 	public void onOpen(Session session,@PathParam("uid")String uid){
 		
-		System.out.println("新的用户注册"+uid);
-		uid_session.put(uid,session);
+		System.out.println("新的用户 "+uid+"正在注册，写入暂存表，等待位置信息");
+		tmpUid_session.put(uid,session);
 		//transmitMessage(uid,"注册成功");
 	}
 	@OnClose
@@ -43,14 +47,15 @@ public class WebSocketServer {
 		uid_session.remove(uid);
 		System.out.println(uid+"已经被删除");
 	}
-	/*@OnMessage
-	public void onMessage(){
+	@OnMessage
+	public void onMessage(String message,Session session,@PathParam("browserSession")String sid){
+		
 		
 	}
 	@OnError
-	public void onError(){
-		
-	}*/
+	public void onError(Session session, Throwable error){
+        error.printStackTrace();
+    }
 	public static void transmitMessage(String toUid,String message){
 		
 		Session toSession=uid_session.get(toUid);
@@ -121,6 +126,32 @@ public class WebSocketServer {
 			toSession.getAsyncRemote().sendText(Mes.toString());
 		}else{
 			System.out.println(toUid+" 已经关闭了和服务器的连接");
+		}
+	}
+	/*
+	 * contention：是否争用，如果为true，则之前登录未退出，通知争用,暂时不处理
+	 */
+	public static void updateOnlineUsers(User tmpUser,boolean contention){
+		
+		
+		int userId = tmpUser.getId();
+		if(!contention){
+			Session session = tmpUid_session.get(String.valueOf(userId));
+			if(session!=null){
+				tmpUid_session.remove(String.valueOf(userId));
+				uid_session.put(String.valueOf(userId), session);
+				System.out.println("把 "+session+" 与 "+userId+" 关联在一起");
+			}
+
+		}
+		
+	}
+	public static void sendToAll(String msg){
+		Session tempSession=null;
+		for(Map.Entry<String, Session> item:uid_session.entrySet()){
+			tempSession=item.getValue();
+			tempSession.getAsyncRemote().sendText(msg);
+			System.out.println("向"+tempSession+" 发送 "+msg);
 		}
 	}
 }

@@ -19,7 +19,11 @@
 <script src="jqueryUI/jquery-ui.js"></script>
 <script src="javascript/uiFactory.js"></script>
 <script src="javascript/ui.js"></script>
+<script src="javascript/common.js"></script>
+<script src="javascript/webSS.js"></script>
+<script src="javascript/Pc.js"></script>
 <link rel="stylesheet" href="css/index.css" />
+<script src="javascript/typed.js"></script>
 <script src="javascript/index.js"></script>
 </head>
 <script type="text/javascript">
@@ -41,21 +45,41 @@
 		if (user == null || user.equals(null)) {
 			response.sendRedirect("login.jsp");
 		}
+		int id = user.getId();
+		String userName = user.getUserName();
+		String showName = user.getShowName();
 	%>
-	<div class="left" id="message">
+	<div id="corver" corver="true">
+		<div class="left" id="message">
+			<P class="nowWork"></P>
+			<p id="waitting"></p>
+		</div>
+		<div class="left" id="user">
+			<ul>
+				<li id="showName" value=<%=showName%>>姓名：<%=showName%></li>
+				<li id="uid" value=<%=id%>>编号：<%=userName%></li>
+			</ul>
+		</div>
+		<div id="loading"></div>
 	</div>
-	<div id="loading"></div>
 	<div id="map"></div>
 </body>
 <script type="text/javascript">
+	var changeSize = function() {
+		var showMap = document.getElementById("map");
+		showMap.style.width = document.documentElement.clientWidth + "px";
+		showMap.style.height = document.documentElement.clientHeight + "px";
+	}
+	window.onresize = changeSize;
 	var showPostion = function(postion) {
 		console.log(postion.coords);
 	}
 	var x = document.getElementById('background');
 	var init = function() {
 		changeSize();
+		var data = null;
 		var geolocation = new BMap.Geolocation();
-		var map = new BMap.Map("map");
+		map = new BMap.Map("map");
 		map.addControl(new BMap.MapTypeControl());
 		geolocation.getCurrentPosition(function(r) {
 			if (this.getStatus() == BMAP_STATUS_SUCCESS) {
@@ -63,21 +87,32 @@
 				map.addOverlay(mk);
 				map.centerAndZoom(r.point, 15);
 				map.enableScrollWheelZoom(true);
+				data = {
+					"user" : $("#uid").attr("value"),
+					"logx" : r.point.lng,
+					"logy" : r.point.lat,
+					"loginTime" : getCurrentTime(),
+					"state" : "success"
+				}
 				//alert('您的位置：'+r.point.lng+','+r.point.lat);
 				//var myDis = new BMapLib.DistanceTool(map);
 				map.addEventListener("click", function(e) {});
 			} else {
-				alert('failed' + this.getStatus());
+				console.log('failed to geoloacation,caused by: ' + this.getStatus());
+				data = {
+					"user" : $("#uid").attr("value"),
+					"loginTime" : getCurrentTime(),
+					"state" : "error"
+				}
 			}
+			$.post("setLoginMsg", data, function(res) {
+				resJson = JSON.parse(res);
+				typeMsg(resJson.message);
+			});
 		}, {
 			enableHighAccuracy : true
 		});
+
 	}
-	var changeSize = function() {
-		var showMap = document.getElementById("map");
-		showMap.style.width = document.documentElement.clientWidth + "px";
-		showMap.style.height = document.documentElement.clientHeight + "px";
-	}
-	window.onresize = changeSize;
 </script>
 </html>

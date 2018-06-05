@@ -1,5 +1,8 @@
 package com.PGV2.DAO;
 import java.util.List;
+
+import javax.management.Query;
+
 import java.util.Date;
 import java.util.Iterator;
 
@@ -86,5 +89,50 @@ public class manageOnlineUser {
 		} finally {
 			session.close();
 		}
+	}
+	/*
+	 * 通过id获得一条记录
+	 */
+	public onlineUser getOneById(Integer onlineUserId ) {
+		onlineUser tmpOnlineUser = null;
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try {
+			tx=session.beginTransaction();
+			tmpOnlineUser = (onlineUser) session.get(onlineUser.class, onlineUserId);
+			tx.commit();
+		} catch (HibernateException e) {
+			// TODO: handle exception
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		return tmpOnlineUser;
+	}
+	public onlineUser getOneByUserId(Integer UserId ) {
+		onlineUser tmpOnlineUser = null;
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try {
+			tx=session.beginTransaction();
+			org.hibernate.query.Query query =  session.createQuery("from onlineUser ou where ou.userId =:userId").setParameter("userId", UserId);
+			List resList = query.list();
+			if(resList.size()>0){
+				Iterator iterator = resList.iterator();
+				tmpOnlineUser = (onlineUser)iterator.next();
+			}
+
+			tx.commit();
+		} catch (HibernateException e) {
+			// TODO: handle exception
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		return tmpOnlineUser;
 	}
 }

@@ -5,12 +5,14 @@ public class User {
 	private String userName;
 	private String userPwd;
 	private String role;
+	private String showName;
 	private int login;
-	public User( String userName, String userPwd, String role, int login) {
+	public User( String userName, String userPwd, String showName,String role, int login) {
 		this.userName = userName;
 		this.userPwd = userPwd;
 		this.role = role;
 		this.login = login;
+		this.showName=showName;
 	}
 	public User() {
 		// TODO Auto-generated constructor stub
@@ -39,11 +41,17 @@ public class User {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	public int isLogin() {
+	public int getLogin() {
 		return login;
 	}
 	public void setLogin(int login) {
 		this.login = login;
+	}
+	public String getShowName() {
+		return showName;
+	}
+	public void setShowName(String showName) {
+		this.showName = showName;
 	}
 	
 	

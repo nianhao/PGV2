@@ -81,6 +81,12 @@ public class messageHandler extends HttpServlet {
 		}else if(type.equals("signal")){
 			String signal=request.getParameter("signal");
 			Signal tmpSignal = new Signal(toUser, fromUser, createTime,type, signal);
+		}else if(type.equals("loginSuccess")){
+			String commandString="";
+			commandString+="{"
+					+"\"type\":\""+"loginSuccess"+"\""
+					+ "}";
+			WebSocketServer.sendToAll(commandString);
 		}
 	}
 
