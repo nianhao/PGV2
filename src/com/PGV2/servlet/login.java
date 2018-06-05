@@ -42,7 +42,7 @@ public class login extends HttpServlet {
 		
 		String userName = request.getParameter("userName").trim();
 		String userPwd = request.getParameter("userPwd").trim();
-		
+		System.out.println(userName+" "+userPwd);
 		manageUser userDao = new manageUser();
 		
 		User tmpUser = userDao.getUserByValid(userName, userPwd);
