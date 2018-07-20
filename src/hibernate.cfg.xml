@@ -12,7 +12,7 @@
 	</property>
 	<!-- Assume test is the database name -->
 	<property name="hibernate.connection.url">
-		jdbc:mysql://localhost/pgv2
+		jdbc:mysql://localhost/cp
 	</property>
 	<property name="hibernate.connection.username">root</property>
 	<property name="hibernate.connection.password">1234</property>
@@ -34,6 +34,7 @@
 	<property name="dialect"></property>
 	<mapping resource="User.hbm.xml" />
 	<mapping resource="onlineUser.hbm.xml" />
+	<mapping resource="upload1.hbm.xml" />
 
 </session-factory>
 </hibernate-configuration> 

@@ -148,6 +148,7 @@ public class WebSocketServer {
 	}
 	public static void sendToAll(String msg){
 		Session tempSession=null;
+		System.out.println("准备向所有在线用户，总计 "+tmpUid_session.size()+" 个人发送 "+msg);
 		for(Map.Entry<String, Session> item:uid_session.entrySet()){
 			tempSession=item.getValue();
 			tempSession.getAsyncRemote().sendText(msg);

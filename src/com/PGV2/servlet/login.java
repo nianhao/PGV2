@@ -39,12 +39,20 @@ public class login extends HttpServlet {
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		response.setCharacterEncoding("utf-8");
 		Writer pw = response.getWriter();
-		
+		HttpSession session = request.getSession();
 		String userName = request.getParameter("userName").trim();
 		String userPwd = request.getParameter("userPwd").trim();
+		String code = request.getParameter("code").trim();
+		String checkCode = (String) session.getAttribute("check_code");
+		//验证验证码是否正确
+		if(!code.equals(checkCode)){
+			System.out.println("验证码错误，系统生成的验证码是 "+checkCode+"  用户输入的是："+code);
+			pw.write("{\"state\":\"error\",\"message\":\"验证码错误！\"}");
+			//return;
+		}
 		System.out.println(userName+" "+userPwd);
 		manageUser userDao = new manageUser();
-		
+		System.out.println("****************接收到的数据是：************\n"+userName+"  "+userPwd);
 		User tmpUser = userDao.getUserByValid(userName, userPwd);
 		if(tmpUser==null||tmpUser.equals(null)){
 			System.out.println("用户名或密码错误");
@@ -56,7 +64,7 @@ public class login extends HttpServlet {
 			tmpUser.setLogin(1);
 			userDao.updateUser(tmpUser);
 			//写入session中
-			HttpSession session = request.getSession();
+			
 			session.setAttribute("user", tmpUser);
 			//跳转到首页
 			pw.write("{\"state\":\"success\",\"redirect\":\"index.jsp\"}");

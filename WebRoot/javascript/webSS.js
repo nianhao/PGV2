@@ -1,10 +1,11 @@
-var webSS=function(uId){
-	var webSocketHost='192.168.0.107/PGV2/'
+var webSS=function(uId,typeWebSSConnected){
+	var webSocketHost='192.168.0.108/PGV2/'
 	var serverEndPoint='webSocketServer/'
 	var uid=null;
 	var socket=null;
 	var onOpen=function(){
 		console.log(uid+" 成功注册websocket服务器");
+		typeWebSSConnected();
 	}
 	var onClose=function(){
 		if(socket!=null&&uid!=null){

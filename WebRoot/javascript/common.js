@@ -31,12 +31,35 @@ var getPC = function(uid, remoteuid) {
 }
 var sendMsg = function(){
 	console.log("发送信息");
+	var onlineUser = window.onlineUser;
+	var uid = $("#uid").attr("value");
+	var remoteuid = onlineUser.userId;
+	var pc = getPC(uid,remoteuid);
+	pc.openTextWin();
+}
+var closeTextWin = function(remoteId){
+	delEle(remoteId);
+}
+var sendTextBtnClick = function (remoteId){
+	var pc = getPC(remoteId);
+	pc.sendText();
 }
 var audioCall = function(){
 	console.log("语音通话");
 }
 var videoCall = function(){
 	console.log("视频通话");
+	var onlineUser = window.onlineUser;
+	var uid = $("#uid").attr("value");
+	var remoteuid = onlineUser.userId;
+    var pc=getPC(uid,remoteuid);
+    //Pc(uid,remoteid);
+    //uid_pc_Map.set(uid,pc);
+    if(window.stream==null){
+    	openLocalStream(pc);
+    }else{
+    	pc.setLocalStream(window.stream);
+    }
 }
 var mapAddUser = function(onlineUser) {
 	var point = new BMap.Point(onlineUser.loginx, onlineUser.loginy)
@@ -50,10 +73,12 @@ var mapAddUser = function(onlineUser) {
 		enableMessage : true, //设置允许信息窗发送短息
 		message : "一个用户"
 	}
-	var infoWindow = new BMap.InfoWindow("编号：" + onlineUser.userName + "\n" + "登录时间:" + onlineUser.loginTime, opts); // 创建信息窗口对象 
+	var infoWindow = new BMap.InfoWindow("编号：" + onlineUser.userName + "\n" + "登录时间:" + onlineUser.loginTime, opts); // 创建信息窗口对象
 	mk.addEventListener("click", function() {
+		
 		map.openInfoWindow(infoWindow, point); //开启信息窗口
 	});
+	mk.onlineUser=onlineUser;
 	//增加右键菜单
 	//创建右键菜单
 	var markerMenu = new BMap.ContextMenu();
@@ -62,8 +87,14 @@ var mapAddUser = function(onlineUser) {
 	//语音通话
 	markerMenu.addItem(new BMap.MenuItem('语音通话', audioCall.bind(mk)));
 	//视频通话
-	markerMenu.addItem(new BMap.MenuItem('视频通话', videCall.bind(mk)));
+	markerMenu.addItem(new BMap.MenuItem('视频通话', videoCall.bind(mk)));
 	mk.addContextMenu(markerMenu);
+	//添加右击事件
+	mk.addEventListener("rightclick",function(){
+		window.onlineUser=this.onlineUser;
+	});
+	//支持拖拽
+	mk.enableDragging()
 }
 var updateOnlineUser = function() {
 	$.post("updateOnlineUser", "", function(res) {

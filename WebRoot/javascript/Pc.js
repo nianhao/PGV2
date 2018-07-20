@@ -155,18 +155,25 @@ var Pc=function(myId,remoteId){
 			"type":"ready",
 		})
 	}
-	var sendText=function (message){
+	var sendText=function (){
 		console.log("发送文字信息");
-		sendToserver({
+		var message=sendBtnClick(myid,remoteid);
+		sendToServer({
 			"toUser":remoteid,
 			"fromUser":myid,
 			"createTime":getCurrentTime(),
 			"type":"text",
-			"text":message
+			"text":JSON.stringify(message)
 		});
 	}
 	var receiveText=function (text){
 		console.log("收到text信息 "+text);
+		var textWin = $(".textContent#"+remoteid);
+		if(textWin.length==0){
+			ui.createTextWin(remoteid);
+		}
+		uiReceive(remoteid,text);
+		
 		
 	}
 	var hangUp=function(){
@@ -187,6 +194,10 @@ var Pc=function(myId,remoteId){
 		rtcPC.close();
 		//delEle(remoteid);
 	}
+	
+	var openTextWin = function(){
+		ui.createTextWin(remoteid);
+	}
 	this.sendOffer=sendOffer;
 	this.init=init;
 	//this.sendAnswer=sendAnswer;
@@ -204,5 +215,6 @@ var Pc=function(myId,remoteId){
 	this.receiveText=receiveText;
 	this.hangUp=hangUp;
 	this.receiveHangUp=receiveHangUp;
+	this.openTextWin = openTextWin;
 
 }

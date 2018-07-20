@@ -36,7 +36,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 </div>
                 <div class="m-2-2-1">
                    <input type="text" placeholder="请输入验证码" id="code" />
-                   <img src="assets/images/1.png"/>
+                   <img id="codeImg" src="./CheckCode"/>
                 </div>
                 <div class="m-2-2">
                    <button type="button" value="登陆" id="loginBtn"/> 登陆

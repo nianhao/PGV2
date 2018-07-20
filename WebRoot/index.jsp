@@ -42,9 +42,11 @@
 	<%
 		//判断用户是否登录
 		User user = (User) session.getAttribute("user");
-		if (user == null || user.equals(null)) {
-			response.sendRedirect("login.jsp");
-		}
+			if(user==null||user.equals(null)){
+				response.sendRedirect("login.jsp");
+				return;
+			}
+
 		int id = user.getId();
 		String userName = user.getUserName();
 		String showName = user.getShowName();
@@ -63,56 +65,12 @@
 		<div id="loading"></div>
 	</div>
 	<div id="map"></div>
+	<input type="button" value="退出" id="exit"><a href="login.jsp"></a></input>
 </body>
-<script type="text/javascript">
-	var changeSize = function() {
-		var showMap = document.getElementById("map");
-		showMap.style.width = document.documentElement.clientWidth + "px";
-		showMap.style.height = document.documentElement.clientHeight + "px";
-	}
-	window.onresize = changeSize;
-	var showPostion = function(postion) {
-		console.log(postion.coords);
-	}
-	var x = document.getElementById('background');
-	var init = function() {
-		changeSize();
-		var data = null;
-		var geolocation = new BMap.Geolocation();
-		map = new BMap.Map("map");
-		map.addControl(new BMap.MapTypeControl());
-		geolocation.getCurrentPosition(function(r) {
-			if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-				var mk = new BMap.Marker(r.point);
-				map.addOverlay(mk);
-				map.centerAndZoom(r.point, 15);
-				map.enableScrollWheelZoom(true);
-				data = {
-					"user" : $("#uid").attr("value"),
-					"logx" : r.point.lng,
-					"logy" : r.point.lat,
-					"loginTime" : getCurrentTime(),
-					"state" : "success"
-				}
-				//alert('您的位置：'+r.point.lng+','+r.point.lat);
-				//var myDis = new BMapLib.DistanceTool(map);
-				map.addEventListener("click", function(e) {});
-			} else {
-				console.log('failed to geoloacation,caused by: ' + this.getStatus());
-				data = {
-					"user" : $("#uid").attr("value"),
-					"loginTime" : getCurrentTime(),
-					"state" : "error"
-				}
-			}
-			$.post("setLoginMsg", data, function(res) {
-				resJson = JSON.parse(res);
-				typeMsg(resJson.message);
-			});
-		}, {
-			enableHighAccuracy : true
-		});
-
-	}
+<script>
+	  	$( document ).tooltip({
+  			show:{effect:"drop",delay:200},
+  			hide:{effect:"drop",delay:200}
+  		});
 </script>
 </html>

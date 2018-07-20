@@ -20,4 +20,7 @@ $(document).ready(function(){
 				}
 		)
 	});
+	$("#codeImg").click(function(){
+		this.src="./CheckCode?"+Math.random();
+	});
 });

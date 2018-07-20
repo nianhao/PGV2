@@ -21,6 +21,9 @@ body{
 	background:black;
 	margin:0 auto;
 	z-index:1000;
+	position:absolute;
+	top:10%;
+	left:30;
 }
 .videoContent .top{
 	width:100%;
@@ -107,6 +110,9 @@ body{
 	overflow:hidden;
 	background: #c1bfbf;
 	z-index:1000;
+	position:absolute;
+	top:10%;
+	left:30;
 }
 .userContent{
 	width:100%;
@@ -214,6 +220,9 @@ body{
 	border-radius:15px;
 	over-flow:hidden;
 	border:1px solid gray;
+	position:absolute;
+	top:10%;
+	left:30;
 }
 .textContent .top{
 	height:40px;
@@ -235,6 +244,12 @@ body{
     border-radius: 22px;
     background-image: url(../image/textIcon/closeBtn.png);
     background-repeat: no-repeat;
+}
+.textContent .top .close #closeBtn{
+	height: 35px;
+    width: 35px;
+    border-radius: 22px;
+    opacity:0;
 }
 .textContent .main .messageContent{
 	height:360px;
