@@ -47,7 +47,7 @@ public class login extends HttpServlet {
 		//验证验证码是否正确
 		if(!code.equals(checkCode)){
 			System.out.println("验证码错误，系统生成的验证码是 "+checkCode+"  用户输入的是："+code);
-			pw.write("{\"state\":\"error\",\"message\":\"验证码错误！\"}");
+			//pw.write("{\"state\":\"error\",\"message\":\"验证码错误！\"}");
 			//return;
 		}
 		System.out.println(userName+" "+userPwd);

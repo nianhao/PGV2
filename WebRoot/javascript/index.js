@@ -9,6 +9,14 @@ window.onresize = changeSize;
 var showPostion = function(postion) {
 	console.log(postion.coords);
 }
+var displayUpload1 =function(){
+	window.displayUpload1Id = window.setInterval(function() {
+		$.post("displayUpload1","",function(res){
+			console.log(res);
+		});
+	}, 5000)
+
+}
 var initMap = function() {
 	changeSize();
 	var data = null;
@@ -19,7 +27,7 @@ var initMap = function() {
 		if (this.getStatus() == BMAP_STATUS_SUCCESS) {
 			var mk = new BMap.Marker(r.point);
 			map.addOverlay(mk);
-			map.centerAndZoom(r.point, 15);
+			map.centerAndZoom(r.point, 5);
 			map.enableScrollWheelZoom(true);
 			data = {
 				"user" : $("#uid").attr("value"),
@@ -50,6 +58,7 @@ var initMap = function() {
 	});
 
 }
+//登录成功，打印登录成功信息
 var typeSuccess=function (){
 	var nowWork = $("p.nowWork")
 	nowWork[nowWork.length-1].setAttribute('class', 'oldWork');
@@ -64,7 +73,12 @@ var typeSuccess=function (){
 		loopCount : Infinity,
 		cursorChar : '|',
 		showCursor :false,
-		onComplete:function(e){sendLogin(uid);}
+		onComplete:function(e){
+			//展示upload1内容
+			displayUpload1();
+			//发送登录信息，更新在线用户信息
+			sendLogin(uid);
+		}
 	});
 	
 }
