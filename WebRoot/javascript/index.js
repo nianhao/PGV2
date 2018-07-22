@@ -5,6 +5,11 @@ var changeSize = function() {
 	showMap.style.width = document.documentElement.clientWidth + "px";
 	showMap.style.height = document.documentElement.clientHeight + "px";
 }
+var tt =function(){
+	$.get("http://106.14.141.55:9090/file/yj?F0000000091457588175",function(res){
+		console.log(res);
+	});
+}
 window.onresize = changeSize;
 var showPostion = function(postion) {
 	console.log(postion.coords);
@@ -13,6 +18,53 @@ var displayUpload1 =function(){
 	window.displayUpload1Id = window.setInterval(function() {
 		$.post("displayUpload1","",function(res){
 			console.log(res);
+			var resJson =JSON.parse(res);
+			var items = resJson["items"];
+			for(var i =0;i<items.length;i++){
+				//读取JSON中携带的内容
+				var tmpItem = items[i];
+				var point = tmpItem["area"];
+				var x = point.split("&")[1];
+				var y = point.split("&")[0];
+				var src = "";//tmpItem["upload1_data"];
+				var upload_date = tmpItem["update_date"];
+				var upload_id = tmpItem["upload_id"];
+				var name = tmpItem["name"];
+				var type = tmpItem["type"];
+				//新建一个icon
+				var newIcon = new BMap.Icon("./image/1.gif", new BMap.Size(30,30),{
+	                anchor:new BMap.Size(13,15),
+	                imageOffset:new BMap.Size(0,0)
+					});
+				//新建一个marker
+				var newPoint = new BMap.Point(x, y);
+				var newMarker = new BMap.Marker(newPoint,{icon:newIcon});
+				newMarker.wholesrc = src;
+				
+				//新建一个信息窗口
+				var opts = {    //创建信息窗口  
+	                	width: 500,     // 信息窗口宽度      
+	                	height: 300,     // 信息窗口高度      
+	                	title: "<h2>现场图像/音像资源展示</h2>"  // 信息窗口标题     
+	            	}
+	    		var infopoint = new BMap.Point(x, y);
+	    		var resource = newMarker.wholesrc;
+	    		var info = new BMap.InfoWindow("", opts);
+    			info.resource = resource;
+    			newMarker.info = info;
+    			newMarker.infopoint = infopoint;
+    			newMarker.info.addEventListener("open", function(){
+    				this.setContent(this.resource);
+    			});
+    			newMarker.info.addEventListener("close", function(){
+    				this.setContent("");
+    			});
+				newMarker.addEventListener("click", function(){
+    				map.openInfoWindow(this.info, this.infopoint);
+				});
+				map.addOverlay(newMarker);
+				console.log("增加了一个资源：",x,"  ",y);
+			}
 		});
 	}, 5000)
 
