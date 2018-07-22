@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AgoraRTC.html</title>
+
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html" charset="UTF-8">
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+</head>
+<script src="AgoraRTCSDK-2.3.1.js"></script>
+<script src="../javascript/jquery-3.3.1.js"></script>
+<style>
+.video {
+	width: 640px;
+	height: 480px;
+	background: gray;
+}
+</style>
+<body>
+	<br> 视频设备：
+	<select id="videoDevices"></select>
+	<br />
+	<br /> 音频设备：
+	<select id="audioDevices"></select>
+	<br />
+	<br /> appId:
+	<input type="text" id="appId" value="db989784e19242ddb7fd7fff69c76059" />
+	<br />
+	<br /> 会议房间：
+	<input type="text" id="channel" value="20180612海大地震应对组" />
+	<div class="video" id="video1">
+		<button value="开启视频" onclick="openStream()">开启视频</button>
+		<button value="发起视频会议" onclick="startVideoConference()">
+			发起视频会议</button>
+	</div>
+	<div id="video"></div>
+</body>
+<script type="text/javascript">
+	var micId,
+		cameraId,
+		localStream,
+		client;
+	if (AgoraRTC.checkSystemRequirements()) {
+
+		console.log("浏览器支持");
+	} else {
+		alert("您的浏览器不支持，部分功能可能无法使用。为了方便请您使用chrome浏览器")
+	}
+	var openStream = function() {
+		micId = $("#audioDevices option").attr("devId");
+		cameraId = $("#videoDevices option").attr("devId");
+		var spec = {
+			"streamID" : 1,
+			"audio" : true,
+			"video" : true,
+			"screen" : false,
+			"mirror" : true,
+			"cameraId" : cameraId,
+			"microphoneId" : micId
+		}
+		localStream = AgoraRTC.createStream(spec);
+		localStream.setVideoProfile('480P');
+		// The user has granted access to the camera and mic.
+		localStream.on("accessAllowed", function() {
+			console.log("accessAllowed");
+		});
+
+		// The user has denied access to the camera and mic.
+		localStream.on("accessDenied", function() {
+			console.log("accessDenied");
+		});
+		localStream.init(
+			function() {
+
+				console.log("open local Stream");
+				localStream.play("video1");
+
+			},
+			function(err) {
+				console.log("getUserMedia failed", err);
+			});
+
+	}
+	var startVideoConference = function() {
+		var config = {
+			mode : "live",
+			codec : "vp8",
+			poxyServer : "",
+			turnServer : ""
+		}
+		var appId,
+			channelKey,
+			channel;
+		appId = $("#appId").val();
+		channel = $("#channel").val();
+		channelKey = "";
+		client = AgoraRTC.createClient(config);
+		client.init(appId, function() {
+			//初始化客户端之后加入会议房间
+			console.log("client initialized");
+			//join channel
+			client.join(channelKey, channel, null, function(uid) {
+				console.log("client" + uid + "joined channel");
+				//create local stream
+				micId = $("#audioDevices option").attr("devId");
+				cameraId = $("#videoDevices option").attr("devId");
+				var spec = {
+					"streamID" : 1,
+					"audio" : true,
+					"video" : true,
+					"screen" : false,
+					"mirror" : true,
+					"cameraId" : cameraId,
+					"microphoneId" : micId
+				}
+				localStream = AgoraRTC.createStream(spec);
+				localStream.setVideoProfile('480P');
+				// The user has granted access to the camera and mic.
+				localStream.on("accessAllowed", function() {
+					console.log("accessAllowed");
+				});
+
+				// The user has denied access to the camera and mic.
+				localStream.on("accessDenied", function() {
+					console.log("accessDenied");
+				});
+				localStream.init(function() {
+					console.log("open local Stream");
+					localStream.play("video1");
+					client.publish(localStream, function(err) {
+						console.log("Publish local stream error: " + err);
+					});
+
+					client.on('stream-published', function(evt) {
+						console.log("Publish local stream successfully");
+					});
+				}, function(err) {
+					console.log("getUserMedia failed", err);
+				});
+			}, function(err) {
+				console.error("client join failed ", err);
+			//error handling
+			});
+		}, function(err) {
+			console.log("client init failed ", err);
+		//error handling
+		});
+		client.on('error', function(err) {
+			console.log("Got error msg:", err.reason);
+			if (err.reason === 'DYNAMIC_KEY_TIMEOUT') {
+				client.renewChannelKey(channelKey, function() {
+					console.log("Renew channel key successfully");
+				}, function(err) {
+					console.log("Renew channel key failed: ", err);
+				});
+			}
+		});
+
+
+		client.on('stream-added', function(evt) {
+			var stream = evt.stream;
+			console.log("New stream added: " + stream.getId());
+			console.log("Subscribe ", stream);
+			client.subscribe(stream, function(err) {
+				console.log("Subscribe stream failed", err);
+			});
+		});
+
+		client.on('stream-subscribed', function(evt) {
+			var stream = evt.stream;
+			console.log("Subscribe remote stream successfully: " + stream.getId());
+			if ($('div#video #agora_remote' + stream.getId()).length === 0) {
+				$('div#video').append('<div id="agora_remote' + stream.getId() + '" style="float:left; width:810px;height:607px;display:inline-block;"></div>');
+			}
+			stream.play('agora_remote' + stream.getId());
+		});
+
+		client.on('stream-removed', function(evt) {
+			var stream = evt.stream;
+			stream.stop();
+			$('#agora_remote' + stream.getId()).remove();
+			console.log("Remote stream is removed " + stream.getId());
+		});
+
+		client.on('peer-leave', function(evt) {
+			var stream = evt.stream;
+			if (stream) {
+				stream.stop();
+				$('#agora_remote' + stream.getId()).remove();
+				console.log(evt.uid + " leaved from this channel");
+			}
+		});
+	}
+	function leave() {
+		document.getElementById("leave").disabled = true;
+		client.leave(function() {
+			console.log("Leavel channel successfully");
+		}, function(err) {
+			console.log("Leave channel failed");
+		});
+	}
+
+	function publish() {
+		document.getElementById("publish").disabled = true;
+		document.getElementById("unpublish").disabled = false;
+		client.publish(localStream, function(err) {
+			console.log("Publish local stream error: " + err);
+		});
+	}
+
+	function unpublish() {
+		document.getElementById("publish").disabled = false;
+		document.getElementById("unpublish").disabled = true;
+		client.unpublish(localStream, function(err) {
+			console.log("Unpublish local stream failed" + err);
+		});
+	}
+	var getDevies = function() {
+		console.log("获取可用设备");
+		AgoraRTC.getDevices(function(devices) {
+			var devCount = devices.length;
+			console.log("总计有：",devices.length);
+			for (var i = 0; i < devCount; i++) {
+				console.log(devices[i].kind,"label是：",devices[i].label);
+				if (devices[i].kind === "audioinput") {
+					if(devices[i].label==""){
+						console.log("label是空的，我来加个名字");
+						devices[i].label="音频输出设备"+i;
+					}
+					$("#audioDevices").append('<option devId="' + devices[i].deviceId + '">' + devices[i].label + '</option>')
+				} else if (devices[i].kind === "videoinput") {
+				if(devices[i].label==""){
+						devices[i].label="视频频输出设备"+i;
+					}
+					$("#videoDevices").append('<option devId="' + devices[i].deviceId + '">' + devices[i].label + '</option>')
+				}
+			}
+		}, function(error) {
+			console.log("获取设备出现错误",error);
+		});
+	}
+	getDevies();
+</script>
+</html>

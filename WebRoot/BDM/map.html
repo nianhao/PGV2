@@ -1,0 +1,601 @@
+<!DOCTYPE html>  
+<html>
+<head>  
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+<title>Hello, World</title>
+ 
+<link rel='stylesheet' href='./javascript/jquery.cardtabs.css'>
+<script type="text/javascript" src="./javascript/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="./javascript/jquery.cardtabs.js"></script>
+<script type="text/javascript" src="./javascript/common.js"></script>
+<script type="text/javascript" src="./javascript/Pc.js"></script>
+<script type="text/javascript" src="./javascript/webSS.js"></script>
+<script type="text/javascript" src="./javascript/local.js"></script>
+<script type="text/javascript" src="./javascript/remote.js"></script>
+
+<style type="text/css">
+
+body { margin:0px;padding:0px;text-align: center;}
+
+/*设置隐藏层*/
+#hidebg { position:absolute;left:0px;top:0px;
+          background-color:#000;
+          width:100%;  /*宽度设置为100%，这样才能使隐藏背景层覆盖原页面*/
+          filter:alpha(opacity=60);  /*设置透明度为60%*/
+          opacity:0.6;  /*非IE浏览器下设置透明度为60%*/
+          display:none; /* http://www.jb51.net */
+          z-Index:2;
+        }
+
+/*被覆盖的一层*/ 
+#container{height:730px;z-Index:1;}  
+
+/*显示在最上面的一层*/
+#hidebox { position:absolute;width:400px;height:300px;top:200px;left:35%;background-color:#fff;display:none;z-Index:3;}
+#hidevedio { position:absolute;width:880px;height:440px;top:200px;left:18%;top:20%;background-color:#fff;display:none;z-Index:3;}
+#hideplan { position:absolute;width:880px;height:440px;top:200px;left:18%;top:20%;background-color:#fff;display:none;z-Index:3;}
+#hideselfplan { position:absolute;width:880px;height:440px;top:200px;left:18%;top:20%;background-color:#fff;display:none;z-Index:3;}
+#hidecall { position:absolute;width:880px;height:440px;top:200px;left:18%;top:20%;background-color:#fff;display:none;z-Index:3;}
+
+</style>  
+
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=39eZXICufe7LvrTo3vfTMaV3OTMA4MS2">
+//v2.0版本的引用方式：src="http://api.map.baidu.com/api?v=2.0&ak=39eZXICufe7LvrTo3vfTMaV3OTMA4MS2"
+</script>
+
+<script>
+
+function sendselfplan()
+{
+	var message = $("#selfplan").val();
+	var toUser=window.username;
+	sendToServer({
+	"toUser":toUser,
+	"fromUser":"0",
+	"type":"text",
+	"message":message
+	});
+}
+
+function sendplan(index)
+{
+	var message = $("#"+index).text();
+	var length = message.length;
+	var toUser = window.username;
+	message = message.substring(0,length-4);
+	sendToServer({
+	"toUser":toUser,
+	"fromUser":"0",
+	"type":"text",
+	"message":message
+	});
+}
+
+// 获取infowindow和poly区域
+function getMsg3()
+{
+	var data = {};
+	$.post(
+	"otherInfo",
+	data,
+	function(e){
+		var otherJson = JSON.parse(e);
+		for(var i=0;i<otherJson.other.length;i++)
+		{
+			var other = otherJson.other[i];
+			
+			// 如果是infowindo类型的数据
+			if(other.type == "infor")
+			{
+			 	var tmp = JSON.stringify(other.content)				
+				var con = JSON.parse(tmp);
+				var x = con.x;
+				var y = con.y;
+				var src = con.src;
+				
+				var newIcon = new BMap.Icon("http://www.yantiansf.cn/mapImage/1.gif", new BMap.Size(30,30),{
+                anchor:new BMap.Size(13,15),
+                imageOffset:new BMap.Size(0,0)
+				});
+	
+				var newPoint = new BMap.Point(x, y);
+				var newMarker = new BMap.Marker(newPoint,{icon:newIcon});
+				newMarker.tmpsrc = src.substring(src.length-3,src.length);
+				newMarker.wholesrc = src;
+				var opts = {    //创建信息窗口  
+                	width: 500,     // 信息窗口宽度      
+                	height: 300,     // 信息窗口高度      
+                	title: "<h2>现场图像/音像资源展示</h2>"  // 信息窗口标题     
+            	}
+    			var infopoint = new BMap.Point(x, y);
+    			var resource = ""
+    			if(newMarker.tmpsrc == "jpg")
+    			{
+    				var resource = "<div style='text-align:center;align:center'><img src=\""+newMarker.wholesrc+"\" width=\"300px\" height=\"225px\"/></div>";
+    			}
+    			if(newMarker.tmpsrc == "mp4")
+    			{
+    				var resource = "<embed src=\""+newMarker.wholesrc+"\" width=\"400px\" height=\"240px\" autostart=true loop=false></embed>";
+    			}
+    			var info = new BMap.InfoWindow("", opts);
+    			info.resource = resource;
+    			newMarker.info = info;
+    			newMarker.infopoint = infopoint;
+    			newMarker.info.addEventListener("open", function(){
+    				this.setContent(this.resource);
+    			});
+    			newMarker.info.addEventListener("close", function(){
+    				this.setContent("");
+    			});
+				newMarker.addEventListener("click", function(){
+    				window.map.openInfoWindow(this.info, this.infopoint);
+				});
+				window.map.addOverlay(newMarker);
+				
+			}
+			// 如果是poly类型的数据
+			if(other.type == "poly")
+			{
+					var points = [];
+					var tmp = JSON.stringify(other.content);				
+					var con = JSON.parse(tmp);
+					var color = con.color;
+					var number = con.number;
+					var type = con.type;
+					var square = con.square;
+					for(var j=0;j<con.arr.length;j++)
+					{
+						var pol = con.arr[j];
+						points.push(new BMap.Point(pol.x,pol.y));
+					}
+					var line = new BMap.Polygon(points,{strokeWeight:"2",strokeColor:color,strokeOpacity:"0.6",fillOpacity:"0.25"});  
+   				    line.type = type;
+   				    line.number = number;
+   				    line.square = square;
+   				    line.addEventListener("rightclick",function(e){
+   				    	var opts = {    //创建信息窗口  
+                			width: 500,     // 信息窗口宽度      
+                			height: 190,     // 信息窗口高度    
+                			title: "<h2>受灾区域信息展示</h2>"  // 信息窗口标题     
+            			}
+    					var infopoint = new BMap.Point(e.point.lng, e.point.lat);
+    					var textinfo = "<div style='background-image:url(bg1.jpg)'><p>灾害类型为："+this.type+"</p><p>受灾人数为："+this.number+"</p>";
+    					textinfo += "<p>受灾面积为："+this.square+"</p></div>";
+    					var info = new BMap.InfoWindow(textinfo, opts);
+    					window.map.openInfoWindow(info, infopoint);
+   				    });
+   				    map.addOverlay(line); 
+			}
+		}
+	}
+	);
+}
+
+// 获取预案信息
+function getMsg2(){
+	var data = {};
+	$.post(
+	"planInfo",
+	data,
+	function(e)
+	{
+		var cityJson = JSON.parse(e);
+		document.getElementById("eq").innerHTML = "";
+		document.getElementById("fire").innerHTML = "";
+		document.getElementById("fd").innerHTML = "";
+		for(var i=0;i<cityJson.plan.length;i++)
+		{
+			var plan = cityJson.plan[i];
+			if(plan.type == "earthquake")
+			{
+				var tmpp = "<p id=\""+i+"\">"+plan.content+"&nbsp&nbsp&nbsp&nbsp&nbsp<button onClick=\"sendplan("+i+")\">发送预案</button>"+"</p>";
+				document.getElementById("eq").innerHTML += tmpp;
+			}
+			if(plan.type == "fire")
+			{
+				var tmpp = "<p id=\""+i+"\">"+plan.content+"&nbsp&nbsp&nbsp&nbsp&nbsp<button onClick=\"sendplan("+i+")\">发送预案</button>"+"</p>";
+				document.getElementById("fire").innerHTML += tmpp;
+			}
+			if(plan.type == "flood")
+			{
+				var tmpp = "<p id=\""+i+"\">"+plan.content+"&nbsp&nbsp&nbsp&nbsp&nbsp<button onClick=\"sendplan("+i+")\">发送预案</button>"+"</p>";
+				document.getElementById("fd").innerHTML += tmpp;
+			}
+		}
+	}
+	);
+}
+
+// 获取地理环境信息
+function getMsg1(){
+
+	var data = {"s":window.s,"w":window.w};
+	$.post(
+	"cityInfo",
+	data,
+	function(e) 
+	{ 
+ 		var cityJson = JSON.parse(e);
+ 		document.getElementById("x").innerHTML = cityJson.x;
+ 		document.getElementById("y").innerHTML = cityJson.y;
+ 	    document.getElementById("wet").innerHTML = cityJson.wet;
+ 		document.getElementById("tem").innerHTML = cityJson.tem;
+ 		document.getElementById("update").innerHTML = cityJson.update;
+ 	}
+	);
+	
+
+}
+
+var setTimeoutName1;
+var setTimeoutDemo1 = function(){
+    getMsg1();
+    setTimeoutName1 = setTimeout(setTimeoutDemo1,5000);
+} 
+
+function clearTimeoutDemo1(){
+        clearTimeout(setTimeoutName1);
+    }
+
+function show(s,w) //显示隐藏层和弹出层
+	{
+		var hideobj = document.getElementById("hidebg");
+		hidebg.style.display = "block"; //显示隐藏层
+		hidebg.style.height = document.body.clientHeight + "px"; //设置隐藏层的高度为当前页面高度
+		document.getElementById("hidebox").style.display = "block"; //显示弹出层
+		window.s = s.toFixed(3);
+		window.w = w.toFixed(3);
+		getMsg1();
+		
+		//setTimeoutDemo1();
+	};
+
+function showvedio(username)
+{
+	var hideobj = document.getElementById("hidebg");
+	hidebg.style.display = "block"; //显示隐藏层
+	hidebg.style.height = document.body.clientHeight + "px"; //设置隐藏层的高度为当前页面高度
+	document.getElementById("hidevedio").style.display = "block"; //显示弹出层
+	
+	console.log("发起呼叫");
+	var uid="0";
+	var remoteuid=username;
+    var pc=getPC(uid,remoteuid);
+    //Pc(uid,remoteid);
+    //uid_pc_Map.set(uid,pc);
+    if(window.stream==null){
+    	openLocalStream(pc,"localvideo");
+    }else{
+    	pc.setLocalStream(window.stream);
+    }
+	
+}
+
+function showcall()
+{
+	var hideobj = document.getElementById("hidebg");
+	hidebg.style.display = "block"; //显示隐藏层
+	hidebg.style.height = document.body.clientHeight + "px"; //设置隐藏层的高度为当前页面高度
+	document.getElementById("hidecall").style.display = "block"; //显示弹出层
+	
+	/*console.log("发起呼叫");
+	var uid="0";
+	var remoteuid=username;
+    var pc=getPC(uid,remoteuid);
+    //Pc(uid,remoteid);
+    //uid_pc_Map.set(uid,pc);
+    if(window.stream==null){
+    	openLocalStream(pc,"localcall");
+    }else{
+    	pc.setLocalStream(window.stream);
+    }*/
+}
+	
+function showplan()
+{
+	var hideobj = document.getElementById("hidebg");
+	hidebg.style.display = "block"; //显示隐藏层
+	hidebg.style.height = document.body.clientHeight + "px"; //设置隐藏层的高度为当前页面高度
+	document.getElementById("hideplan").style.display = "block"; //显示弹出层
+	
+	getMsg2();
+}
+	
+function showselfplan()
+{
+	var hideobj = document.getElementById("hidebg");
+	hidebg.style.display = "block"; //显示隐藏层
+	hidebg.style.height = document.body.clientHeight + "px"; //设置隐藏层的高度为当前页面高度
+	document.getElementById("hideselfplan").style.display = "block"; //显示弹出层
+	$("#selfplan").val("");
+	
+}	
+
+function hide() //去除隐藏层和弹出层
+{
+	document.getElementById("hidebg").style.display = "none";
+	document.getElementById("hidebox").style.display = "none";
+	//clearTimeoutDemo1();
+}
+
+function hidevedio() //去除隐藏层和弹出层
+{
+	document.getElementById("hidebg").style.display = "none";
+	document.getElementById("hidevedio").style.display = "none";
+}
+
+function hideplan() //去除隐藏层和弹出层
+{
+	document.getElementById("hidebg").style.display = "none";
+	document.getElementById("hideplan").style.display = "none";
+}
+
+function hideselfplan() //去除隐藏层和弹出层
+{
+	document.getElementById("hidebg").style.display = "none";
+	document.getElementById("hideselfplan").style.display = "none";
+}
+
+function hidecall() //去除隐藏层和弹出层
+{
+	document.getElementById("hidebg").style.display = "none";
+	document.getElementById("hidecall").style.display = "none";
+}
+
+// 异步连接数据库
+function getMsg(){
+
+	var xmlhttp;
+	if (window.XMLHttpRequest)
+  		{// code for IE7+, Firefox, Chrome, Opera, Safari
+  			xmlhttp=new XMLHttpRequest();
+  		}
+	else
+  		{// code for IE6, IE5
+  			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  		}
+  	
+  	//GET数据到服务器
+  	xmlhttp.open("GET","mapInfo",true);
+	//xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	xmlhttp.onreadystatechange=stateChanged;
+	xmlhttp.send(null);
+	
+	function stateChanged() 
+	{ 
+		if (xmlhttp.readyState==4 || xmlhttp.readyState=="complete")
+ 			{ 
+ 				var posJson = JSON.parse(xmlhttp.responseText);
+				
+				var os = map.getOverlays();
+				for(var i=0;i<os.length;i++)
+				{
+					if(os[i].toString() == "[object Marker]")
+					{
+						map.removeOverlay(os[i]);
+					}
+				}
+				//window.map.clearOverlays(); 
+				
+				for(var i=0;i<posJson.Allpos.length;i++)
+				{
+					var pos = posJson.Allpos[i];
+					var point = new BMap.Point(pos.x,pos.y);
+					//http://www.yantiansf.cn/mapImage/1.gif   闪烁图标
+					var typesrc = "";
+					if(pos.type == "plane")
+						typesrc = "plane.png";
+					if(pos.type == "car")
+						typesrc = "car.png";
+					if(pos.type == "people")
+						typesrc = "people.png";
+
+					var myIcon = new BMap.Icon(typesrc, new BMap.Size(90,87),{
+					anchor:new BMap.Size(45,40),
+					imageOffset:new BMap.Size(0,0)
+					});
+					
+					var marker = new BMap.Marker(point,{icon:myIcon});
+					
+					// 响应左键单击事件
+					marker.addEventListener("click", function(){
+    					alert("左键点击了一下标注");
+						}
+					);  
+   
+   					// 响应拖拽事件
+   					/*marker.enableDragging(); 
+					marker.addEventListener("dragend", function(e){    
+    					alert("当前位置：" + e.point.lng + ", " + e.point.lat);    
+					});*/
+					marker.username = pos.username;
+					marker.addEventListener("rightclick", function(e){
+						window.x = this.getPosition().lng;
+						window.y = this.getPosition().lat; 
+						window.username = this.username; 
+					});
+					
+					var markerMenu=new BMap.ContextMenu();
+					
+					var menuItem = new BMap.MenuItem('视频操作',function(e){
+    					showvedio(window.username);
+					});
+					
+					var menuItem1 = new BMap.MenuItem('语音操作',function(e){
+    					showcall(window.username);
+					});
+					
+					var menuItem2 = new BMap.MenuItem('获取信息操作',function(e){
+						show(window.x,window.y);
+					});
+					
+					var menuItem3 = new BMap.MenuItem('预案选取操作',function(e){
+    					showplan();
+					});
+					
+					var menuItem4 = new BMap.MenuItem('人工指令操作',function(e){
+    					showselfplan();
+					});
+					
+					
+					markerMenu.addItem(menuItem);
+					markerMenu.addItem(menuItem1);
+					markerMenu.addItem(menuItem2);
+					markerMenu.addItem(menuItem3);
+					markerMenu.addItem(menuItem4);
+					marker.addContextMenu(markerMenu);  //给标记添加右键菜单(默认右键点击事件？)
+					
+					// 如果事发地点发生灾害则显示跳动动画
+					if(pos.flag == 1)
+						marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+					
+					// 显示电量部分	
+					var pointLabel = new BMap.Point(pos.x, pos.y);
+					var label = new BMap.Label("label");
+	
+					var percentwidth = 28 - pos.battery / 100 * 28;
+					
+					var batterycolor = "url('green.png')";
+					if(pos.battery <= 20)
+						batterycolor = "url('red.png')"
+					
+					label.setContent(pos.battery+"%");
+					var batteryDisplay =  percentwidth + "px 0px";
+					label.setStyle({backgroundImage:batterycolor,width:"28px",height:"12px",backgroundRepeat:"no-repeat",backgroundPosition:batteryDisplay,
+					marginLeft:"-15px",textAlign:"center"});
+	
+					label.setPosition(pointLabel);
+					window.map.addOverlay(label);	
+					
+					marker.enableMassClear();
+					
+					window.map.addOverlay(marker);
+				}
+				
+			} 
+	}
+   
+}
+
+var setTimeoutName;
+var setTimeoutDemo = function(){
+    getMsg();
+    setTimeoutName = setTimeout(setTimeoutDemo,5000);
+} 
+
+window.onload = function(){
+	
+	var map = new BMap.Map("container");
+
+	window.map = map;
+
+	// 创建地图实例  
+	var point = new BMap.Point(103.808, 29.576);
+	// 创建点坐标  
+	map.centerAndZoom(point, 15);
+	// 初始化地图，设置中心点坐标和地图级别  
+	
+	map.addControl(new BMap.NavigationControl());    
+	map.addControl(new BMap.ScaleControl());    
+	map.addControl(new BMap.OverviewMapControl());    
+	map.addControl(new BMap.MapTypeControl());
+
+	getMsg(); 
+	getMsg3(); 
+	
+	//setTimeoutDemo();
+}
+</script>
+</head>  
+ 
+<body>  
+
+<input type="hidden" id="userName" value="admin"></input>
+<input type="hidden" id="userId" value="U0000000001"></input>
+
+<div id="container"></div> 
+
+<div id="hidebg"></div>
+
+<div id="hidebox" style="background-image: url('bg.jpg');">
+<h2>现场地理信息展示：</h2>
+<p style="font-family:'楷体';font-size: 18px">经度为：<label id="x"></label></p>
+<p style="font-family:'楷体';font-size: 18px">纬度为：<label id="y"></label></p>
+<p style="font-family:'楷体';font-size: 18px">现场湿度为：<label id="wet"></label></p>
+<p style="font-family:'楷体';font-size: 18px">现场温度为：<label id="tem"></label></p>
+<p style="font-family:'楷体';font-size: 18px">信息更新时间为：<label id="update"></label></p>
+<button onClick="hide()" style="position:relative; top:90%">关闭</button>
+</div>
+
+<div id="hidevedio" style="background-image: url(bg2.jpg);">
+<h2>视频通话界面</h2>
+<!--显示我的视频窗口-->
+<div id="from" style="position:absolute;width:360px;background-color:red;height:270px;left:10%">
+<video autoplay id="localvideo" style="width:360px;height:270px"></video>
+</div>
+<!--显示对方的视频窗口-->
+<div id="to" style="position:absolute;width:360px;background-color:green;height:270px;left:53%">
+<video autoplay id="remotevideo" style="width:360px;height:270px"></video>
+</div>
+<button onClick="hidevedio()" style="position:absolute; top:90%; left:45%">关闭视频</button>
+</div>
+
+<div id="hidecall" style="background-image: url(bg2.jpg);">
+<h2>语音通话界面</h2>
+<!--显示我的视频窗口-->
+<div id="fromcall" style="position:absolute;width:360px;background-image:url('talk.jpg');
+background-repeat:no-repeat;height:270px;left:10%">
+<video autoplay id="localcall" style="width:360px;height:270px"></video>
+</div>
+<!--显示对方的视频窗口-->
+<div id="tocall" style="position:absolute;width:360px;background-image:url('talk.jpg');
+background-repeat:no-repeat;height:270px;left:60%">
+<video autoplay id="remotecall" style="width:360px;height:270px"></video>
+</div>
+<button onClick="hidecall()" style="position:absolute; top:90%; left:45%">关闭语音</button>
+</div>
+
+<div id="hideplan" style="background-image: url(bg1.jpg);">
+<h2>预案选取界面</h2>
+
+<div class='example'>
+	<div class='tabsholder3'>
+		<div data-tab="earthquake" style="background-color: #c2e2ed">
+			<div id="eq"></div>
+		</div>
+		
+		<div data-tab="fire" style="background-color: #c2e2ed">
+			<div id="fire"></div>
+		</div>
+		
+		<div data-tab="flood" style="background-color: #c2e2ed">
+			<div id="fd"></div>
+		</div>
+	</div>
+</div>
+
+<button onClick="hideplan()" style="position:absolute; top:90%; left:45%">关闭预案</button>
+</div>
+
+<div id="hideselfplan" style="background-image: url(bg1.jpg);">
+<p>自定义预案发送界面</p>
+<p><textarea autofocus id="selfplan" style="width:690px;height:280px;resize:none"></textarea></p>
+<button onClick="sendselfplan()">发送自定义预案</button>
+<button onClick="hideselfplan()" style="position:absolute; top:90%; left:43.8%">关闭自定义预案</button>
+</div>
+
+<script type='text/javascript'>
+		$('.tabsholder1').cardTabs();
+		$('.tabsholder2').cardTabs({theme: 'inset'});
+		$('.tabsholder3').cardTabs({theme: 'graygreen'});
+		$('.tabsholder4').cardTabs({theme: 'wiki'});
+</script>
+
+</body>
+
+<script>
+	socket=new webSS("0");
+</script>
+  
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping>
+   <class name="com.PGV2.javaBean.upload1" table="cp_yj_upload1">
+      <meta attribute="class-description">
+         This class contains the upload1 detail. 
+      </meta>
+	  <id name="upload1_id" type="string" column="upload1_id">
+	  	<generator class="native"/>
+	  </id>
+      <property name="name" column="name" type="string"/>
+      <property name="type" column="type" type="string"/>
+      <property name="update_date" column="update_date" type="java.sql.Timestamp"/>
+      <property name="upload1_data" column="upload1_data" type="string"/>
+      <property name="area" column="area" type="string"/>
+      <property name="level" column="level" type="string"/>
+      <property name="sd_name" column="sd_name" type="string"/>
+      <property name="sd_level" column="sd_level" type="string"/>
+      <property name="factors" column="factors" type="string"/>
+      <property name="tnum" column="tnum" type="int"/>
+      <property name="dnum" column="dnum" type="int"/>
+      <property name="bnum" column="bnum" type="int"/>
+      <property name="lnum" column="lnum" type="int"/>
+      <property name="des" column="des" type="string"/>
+      <property name="dem" column="dem" type="string"/>
+      <property name="oth" column="oth" type="string"/>
+      <property name="app_id" column="app_id" type="string"/>
+   </class>
+</hibernate-mapping>
